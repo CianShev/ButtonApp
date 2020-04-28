@@ -1,22 +1,32 @@
 package com.example.myapplication;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.myapplication.DBContract;
+
 
 public class DBHelper extends SQLiteOpenHelper {
-    DBContract db = new DBContract();
+
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "ButtonDB.db";
 
-    public DBHelper(Context context){
+    private static final String SQL_CREATE_ENTRIES =
+            "CREATE TABLE " + DBContract.DBEntry.TABLE_NAME + " (" +
+                    DBContract.DBEntry._ID + " INTEGER PRIMARY KEY," +
+                    DBContract.DBEntry.COLUMN_NAME_USER + " TEXT," +
+                    DBContract.DBEntry.COLUMN_NAME_COUNT + " INTEGER)";
+
+    private static final String SQL_DELETE_ENTRIES =
+            "DROP TABLE IF EXISTS " + DBContract.DBEntry.TABLE_NAME;
+
+    public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTERIES);
+        db.execSQL(SQL_CREATE_ENTRIES);
     }
 
     @Override
@@ -24,4 +34,16 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
+
+    public long insertNew(int count, String user){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBContract.DBEntry.COLUMN_NAME_USER, user);
+        contentValues.put(DBContract.DBEntry.COLUMN_NAME_COUNT, count);
+        long id = db.insert(DBContract.DBEntry.TABLE_NAME, null, contentValues);
+        db.close();
+        return id;
+    }
+
+
 }
