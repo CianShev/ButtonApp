@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -42,6 +43,19 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBContract.DBEntry.COLUMN_NAME_COUNT, count);
         long id = db.insert(DBContract.DBEntry.TABLE_NAME, null, contentValues);
         db.close();
+        return id;
+    }
+
+    public long getMostRecent(long id){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(DBContract.DBEntry.TABLE_NAME,
+                    new String[]{DBContract.DBEntry._ID, DBContract.DBEntry.COLUMN_NAME_COUNT},
+                    DBContract.DBEntry._ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
         return id;
     }
 
