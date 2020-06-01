@@ -9,13 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
+import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     int buttonCounter;
     String user = "Test User";
     private DBHelper db;
-
+    private long currentId;
     // Set up, draw buttons
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,19 +39,21 @@ public class MainActivity extends AppCompatActivity {
         getAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAllFromDb();
+                getAllFromDb(currentId);
             }
         });
     }
 
 
         private void writeToDB(){
-            long id = db.insertNew(buttonCounter, user);
+        String currentTime = Calendar.getInstance().getTime().toString();
+        currentId = db.insertNew(buttonCounter, user, currentTime);
+            Log.d("writeToDB", "writeToDB: " + currentId);
     }
 
-        private void getAllFromDb(){
+        private void getAllFromDb(long id){
             final TextView textViewResult = findViewById(R.id.textViewResult_id);
-            textViewResult.setText("Number of times pressed: " + db.getMostRecent(1) );
+            textViewResult.setText("Number of times pressed: " + db.getMostRecent(id) );
     }
 
 
