@@ -56,7 +56,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         while(cursor.moveToNext()){
             int index;
-            index = cursor.getColumnIndex(DBContract.DBEntry.COLUMN_NAME_COUNT);
+            index = cursor.getColumnIndex(DBContract.DBEntry.COLUMN_NAME_COUNT );
             result = cursor.getInt(index);
         }
         return result;
