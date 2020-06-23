@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.myapplication.HTTPAccess;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         db = new DBHelper(this);
         setContentView(R.layout.activity_main);
         final TextView textView = findViewById(R.id.textView_id);
+        final TextView textViewServerReponse = findViewById(R.id.textViewServerResponse);
         final TextView textViewResult = findViewById(R.id.textViewResult_id);
         Button button = findViewById(R.id.button_id);
         button.setOnClickListener(new View.OnClickListener() {
@@ -56,34 +58,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button sendToServerButton = findViewById(R.id.sendToServerButton_id);
-        sendToServerButton.setOnClickListener(new View.OnClickListener() {
+        //final Button sendToServerButton = findViewById(R.id.sendToServerButton_id);
+        //sendToServerButton.setOnClickListener(new View.OnClickListener() {
+          //  @Override
+            //public void onClick(View v) {
+              //  sendToServer();
+            //}
+        //});
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String URL = access.getAccessToken();
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response from server", "onResponse: " + response.toString());
+                        textViewServerReponse.setText(response.toString());
+                    }
+                }, new Response.ErrorListener() {
+
             @Override
-            public void onClick(View v) {
-                sendToServer();
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Server response", "onErrorResponse: " + " Server response error" + error);
+                textViewServerReponse.setText(error.toString());
             }
+
         });
+        queue.add(jsonRequest);
     }
-        private void sendToServer(){
-            RequestQueue queue = Volley.newRequestQueue(this);
-            String URL = access.getAccessToken();
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, URL, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("Response from server", "onResponse: " + response.toString());
-                        }
-                        }, new Response.ErrorListener() {
-
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d("Server response", "onErrorResponse: " + " Server response error");
-
-                            }
-
-                    });
-            queue.add(jsonRequest);
-        }
 
         private void writeToDB(){
         String currentTime = Calendar.getInstance().getTime().toString();
